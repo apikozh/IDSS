@@ -1,0 +1,27 @@
+системы интеллектуального анализа дорожной ситуации и автоматического реагирования
+
+Lighter Color
+Availability of Cars
+Availability of peoples
+Availability of accident
+Availability of stops
+
+RED
+
+Point
+ - X
+ - Y
+
+Road 
+ - Point from
+ - Point to
+ 
+Rule/Restriction
+ - Point at
+ - Road from
+ - Road to
+ - inverted
+ - TrafficLight or null (Deny)
+ 
+TrafficLight
+
