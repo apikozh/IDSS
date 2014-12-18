@@ -192,7 +192,7 @@ public class MainWindow extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (map.path != null)
         for (MapObject mo : map.path) {
-            mo.setSelected(false);
+            mo.setSelected(0);
         }
         
         Car car = new Car();
@@ -204,7 +204,7 @@ public class MainWindow extends javax.swing.JFrame {
         ArrayList<MapObject> path = map.findBestRoute(map.points.get(from), 
                 map.points.get(to), null, car);
         for (MapObject mo : path) {
-            mo.setSelected(true);
+            mo.setSelected(0);
         }
         map.path = path;
         
