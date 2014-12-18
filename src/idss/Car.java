@@ -10,7 +10,7 @@ package idss;
  * @author Andrew
  */
 public class Car {
-    double maxSpeed;
+    double maxSpeed; // m/s
     //double acceleration;
 
     public double getMaxSpeed() {

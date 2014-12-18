@@ -14,7 +14,7 @@ import java.sql.Time;
  */
 public abstract class MapObject {
     int id;
-    int lag;
+    float lag;
     Time timeToReach;
     MapObject path;
     int selected;
@@ -28,11 +28,11 @@ public abstract class MapObject {
         this.id = id;
     }
 
-    public int getLag() {
+    public float getLag() {
         return lag;
     }
 
-    public void setLag(int lag) {
+    public void setLag(float lag) {
         this.lag = lag;
     }
 

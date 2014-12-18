@@ -74,6 +74,12 @@ public class Point extends MapObject implements Comparable {
         return null;
     }
     
+	public double getDistanceTo(Point point) {
+        double dx = getX() - point.getX();
+        double dy = getY() - point.getY();
+        return Math.sqrt(dx*dx + dy*dy);
+	}
+	
     public Time getTimeToPass(Time time, Road from, Road to, Car car) {
         if (from != null && to != null && 
                 roads.contains(from) && roads.contains(to))

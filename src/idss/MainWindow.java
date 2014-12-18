@@ -129,6 +129,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jSpinner1 = new javax.swing.JSpinner();
         jSpinner2 = new javax.swing.JSpinner();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -137,7 +138,7 @@ public class MainWindow extends javax.swing.JFrame {
         mapPanel.setLayout(mapPanelLayout);
         mapPanelLayout.setHorizontalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 430, Short.MAX_VALUE)
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,7 +147,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         getContentPane().add(mapPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 370));
 
-        jButton1.setText("Calculate");
+        jButton1.setText("Calculate route \\w best dist");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -156,6 +157,13 @@ public class MainWindow extends javax.swing.JFrame {
         jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 6, 1));
 
         jSpinner2.setModel(new javax.swing.SpinnerNumberModel(1, 1, 6, 1));
+
+        jButton2.setText("Calculate route \\w best time");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -169,8 +177,10 @@ public class MainWindow extends javax.swing.JFrame {
                 .addGap(27, 27, 27))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -181,10 +191,12 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(225, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2)
+                .addContainerGap(191, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 110, 370));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 240, 370));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -196,13 +208,12 @@ public class MainWindow extends javax.swing.JFrame {
         }
         
         Car car = new Car();
-        car.setMaxSpeed(80);
+        car.setMaxSpeed(22.22); //m/s = 80 km/h
         
         int from = (int)jSpinner1.getValue()-1;
         int to = (int)jSpinner2.getValue()-1;
         
-        ArrayList<MapObject> path = map.findBestRoute(map.points.get(from), 
-                map.points.get(to), null, car);
+        ArrayList<MapObject> path = map.findRouteWithBestDist(map.points.get(from), map.points.get(to));
         for (MapObject mo : path) {
             mo.setSelected(0);
         }
@@ -210,6 +221,28 @@ public class MainWindow extends javax.swing.JFrame {
         
         repaint();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        if (map.path != null)
+        for (MapObject mo : map.path) {
+            mo.setSelected(0);
+        }
+        
+        Car car = new Car();
+        car.setMaxSpeed(22.22); //m/s = 80 km/h
+        
+        int from = (int)jSpinner1.getValue()-1;
+        int to = (int)jSpinner2.getValue()-1;
+        
+        ArrayList<MapObject> path = map.findRouteWithBestTime(map.points.get(from), 
+                map.points.get(to), null, car);
+        for (MapObject mo : path) {
+            mo.setSelected(0);
+        }
+        map.path = path;
+        
+        repaint();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -248,6 +281,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;

@@ -20,19 +20,17 @@ public class MapInfo {
     ArrayList<MapObject> path;
     
     private double getHeuristicCost(Point a, Point b, Car car) {
-        double dx = a.getX() - b.getX();
-        double dy = a.getY() - b.getY();
-        return Math.sqrt(dx*dx + dy*dy)/car.getMaxSpeed();
+        return a.getDistanceTo(b)/car.getMaxSpeed();
     }
     
-    public ArrayList<MapObject> findBestRoute(Point from, Point to, Time time, 
-			Car car/*, boolean includeDelays, boolean include*/) {
+    public ArrayList<MapObject> findRouteWithBestTime(Point from, Point to, Time time, Car car) 
+	{
         ArrayList<Point> closedSet = new ArrayList<>();
         PriorityQueue<Point> openSet = new PriorityQueue<>();
         ArrayList<MapObject> path = new ArrayList<>();
         
         from.cameFrom = null;
-        from.tentativeTime = 0;
+        from.tentativeTime = from.getLag();
         from.heuristicCost = getHeuristicCost(from, to, car);
         from.totalCost = from.tentativeTime + from.heuristicCost;
         openSet.add(from);
@@ -57,7 +55,10 @@ public class MapInfo {
                 if (closedSet.contains(neighbor)) {
                     continue;
                 }
-                double tentativeTime = best.tentativeTime + road.getTimeDelay(time, car, 100);
+                double tentativeTime = best.tentativeTime + 
+						road.getTimeDelay(time, car, 100) + 
+						neighbor.getLag() + 
+						(road.getBegin() == best ? road.getToLag() : road.getFromLag());
                 if (openSet.contains(neighbor)) {
                     if (tentativeTime < neighbor.tentativeTime) {
                         neighbor.cameFrom = road;
@@ -76,7 +77,58 @@ public class MapInfo {
         }
         return null;
     }
-    
+
+    public ArrayList<MapObject> findRouteWithBestDist(Point from, Point to) {
+        ArrayList<Point> closedSet = new ArrayList<>();
+        PriorityQueue<Point> openSet = new PriorityQueue<>();
+        ArrayList<MapObject> path = new ArrayList<>();
+        
+        from.cameFrom = null;
+        from.tentativeTime = 0;
+        from.heuristicCost = from.getDistanceTo(to);	//getHeuristicCost(from, to, car);
+        from.totalCost = from.tentativeTime + from.heuristicCost;
+        openSet.add(from);
+        
+        while (!openSet.isEmpty()) {
+            Point best = openSet.poll();
+            if (best == to) {
+                path.add(to);
+                Point curr = to;
+                Road lastRoad = curr.cameFrom;
+                while(lastRoad != null) {
+                    path.add(lastRoad);
+                    curr = lastRoad.getEnd() == curr ? lastRoad.getBegin() : lastRoad.getEnd();
+                    path.add(curr);
+                    lastRoad = curr.cameFrom;
+                }
+                return path;
+            }
+            closedSet.add(best);
+            for (Road road : best.getRoads()) {
+                Point neighbor = road.getBegin() == best ? road.getEnd() : road.getBegin();
+                if (closedSet.contains(neighbor)) {
+                    continue;
+                }
+                double tentativeTime = best.tentativeTime + road.getLength();
+                if (openSet.contains(neighbor)) {
+                    if (tentativeTime < neighbor.tentativeTime) {
+                        neighbor.cameFrom = road;
+                        neighbor.tentativeTime = tentativeTime;
+                        neighbor.heuristicCost = neighbor.getDistanceTo(to);	//getHeuristicCost(neighbor, to, car);
+                        neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
+                    }
+                }else{
+                    neighbor.cameFrom = road;
+                    neighbor.tentativeTime = tentativeTime;
+                    neighbor.heuristicCost = neighbor.getDistanceTo(to);
+                    neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
+                    openSet.add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+	
     private Point findPointByID(int id) {
         for(Point p : points) {
             if (p.getId() == id) {
@@ -102,7 +154,7 @@ public class MapInfo {
                 int lag = rs.getInt("lag");
                 Point p = new Point(x, y);
                 p.setId(id);
-                p.setLag(lag);
+                p.setLag(lag/1000.f);
                 points.add(p);
             }
 
@@ -128,8 +180,8 @@ public class MapInfo {
                 r.setSpeedLimit(speedLimit);
                 r.setId(id);
                 r.setTrafficJamScore(trafficJamScore);
-                r.setFromLag(FromLag);
-                r.setToLag(ToLag);
+                r.setFromLag(FromLag/1000.f);
+                r.setToLag(ToLag/1000.f);
                 roads.add(r);
             }
             

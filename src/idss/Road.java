@@ -24,7 +24,7 @@ public class Road extends MapObject {
     int intScore;   // 1(good road) .. 10(cant pass)
     int trafficJamScore;    // 1(no jam) .. 10 (big jam)
     float speedLimit;
-    int ToLag, FromLag;
+    float ToLag, FromLag;
     
     //ArrayList<Accident> accidents;
     
@@ -101,23 +101,27 @@ public class Road extends MapObject {
         return intScore;
     }
 
+	public double getLength() {
+		return begin.getDistanceTo(end);
+	}
+	
     public void setIntScore(int intScore) {
         this.intScore = intScore;
     }
 
-    public int getFromLag() {
+    public float getFromLag() {
         return FromLag;
     }
 
-    public void setFromLag(int fromLag) {
+    public void setFromLag(float fromLag) {
         this.FromLag = fromLag;
     }
     
-    public int getToLag() {
+    public float getToLag() {
         return ToLag;
     }
 
-    public void setToLag(int toLag) {
+    public void setToLag(float toLag) {
         this.ToLag = toLag;
     }
 
