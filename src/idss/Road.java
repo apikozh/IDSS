@@ -5,8 +5,12 @@
  */
 package idss;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.sql.Time;
 
 /**
@@ -108,13 +112,69 @@ public class Road extends MapObject {
         this.trafficJamScore = trafficJamScore;
     }
     
+	/*	1px for single line
+		3px for double line
+		5px for lane
+	*/
+	public int getWidth() {
+		int result = 5*lanesNum + 1*(lanesNum-1);
+		if (bidirectional)
+			result = 2*result + 3;
+		return result;
+	}
+	
+	@Override
     public void drawTo(Graphics g, int scrollX, int scrollY) {
-        if (selected)
+        Graphics2D g2d = (Graphics2D)g;
+		if (selected)
             g.setColor(Color.red);
         else
             g.setColor(Color.black);
-        g.drawLine(scrollX + (int)begin.getX(), scrollY + (int)begin.getY(), 
-                scrollX + (int)end.getX(), scrollY + (int)end.getY());
-    }
+        double pNx = end.getY() - begin.getY(), pNy = begin.getX() - end.getX();
+		pNx = pNx/Math.sqrt(pNx*pNx + pNy*pNy);
+		pNy = pNy/Math.sqrt(pNx*pNx + pNy*pNy);
+
+		g2d.setStroke(new BasicStroke(1.0f));
+		
+		g2d.draw(new Line2D.Double(
+				scrollX + begin.getX() - pNx, 
+				scrollY + begin.getY() - pNy, 
+                scrollX + end.getX() - pNx, 
+				scrollY + end.getY() - pNy));
+
+		g2d.draw(new Line2D.Double(
+				scrollX + begin.getX() + pNx, 
+				scrollY + begin.getY() + pNy, 
+                scrollX + end.getX() + pNx, 
+				scrollY + end.getY() + pNy));
+
+		double lX, lY;
+		final float dash1[] = {5.0f};
+		//lX = pNx * (1 + 6 * (i+1));
+		//lY = pNy * (1 + 6 * (i+1));
+			
+		for (int i = 0; i < lanesNum; i++) {
+			if (i < lanesNum-1)
+				g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_BUTT,
+						BasicStroke.JOIN_MITER, 10.0f, dash1, 0.0f));
+			else
+				g2d.setStroke(new BasicStroke(1.0f));
+				
+			lX = pNx * (1 + 6 * (i+1));
+			lY = pNy * (1 + 6 * (i+1));
+			
+			g2d.draw(new Line2D.Double(
+					scrollX + begin.getX() - lX, 
+					scrollY + begin.getY() - lY, 
+					scrollX + end.getX() - lX, 
+					scrollY + end.getY() - lY));
+
+			g2d.draw(new Line2D.Double(
+					scrollX + begin.getX() + lX, 
+					scrollY + begin.getY() + lY, 
+					scrollX + end.getX() + lX, 
+					scrollY + end.getY() + lY));
+ 		}
+	}
     
 }

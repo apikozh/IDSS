@@ -6,6 +6,8 @@
 package idss;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 /**
  *
@@ -28,7 +30,11 @@ public class MapPanel extends javax.swing.JPanel {
     
     @Override
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D)g;
+        
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         
         if (map != null) {
             for (Point p : map.points) {
