@@ -26,7 +26,7 @@ public class MapInfo {
     }
     
     public ArrayList<MapObject> findBestRoute(Point from, Point to, Time time, 
-			Car car, boolean includeDelays, boolean include) {
+			Car car/*, boolean includeDelays, boolean include*/) {
         ArrayList<Point> closedSet = new ArrayList<>();
         PriorityQueue<Point> openSet = new PriorityQueue<>();
         ArrayList<MapObject> path = new ArrayList<>();
