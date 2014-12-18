@@ -99,8 +99,10 @@ public class MapInfo {
                 int id = rs.getInt("id");
                 double x  = rs.getInt("x");
                 double y = rs.getInt("y");
+                int lag = rs.getInt("lag");
                 Point p = new Point(x, y);
                 p.setId(id);
+                p.setLag(lag);
                 points.add(p);
             }
 
@@ -112,6 +114,9 @@ public class MapInfo {
                 boolean bidir = rs.getBoolean("bidirectional");
                 int lanesNum = rs.getInt("lanes_num");
                 int intScore = rs.getInt("int_score");
+                int ToLag = rs.getInt("tolag");
+                int FromLag = rs.getInt("fromlag");
+                
                 int trafficJamScore = rs.getInt("traffic_jam");
                 float speedLimit = (float)rs.getDouble("speed_limit");
                 
@@ -123,6 +128,8 @@ public class MapInfo {
                 r.setSpeedLimit(speedLimit);
                 r.setId(id);
                 r.setTrafficJamScore(trafficJamScore);
+                r.setFromLag(FromLag);
+                r.setToLag(ToLag);
                 roads.add(r);
             }
             

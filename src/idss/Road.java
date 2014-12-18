@@ -24,8 +24,7 @@ public class Road extends MapObject {
     int intScore;   // 1(good road) .. 10(cant pass)
     int trafficJamScore;    // 1(no jam) .. 10 (big jam)
     float speedLimit;
-	long beginDelay;
-	long endDelay;
+    int ToLag, FromLag;
     
     //ArrayList<Accident> accidents;
     
@@ -44,22 +43,6 @@ public class Road extends MapObject {
         this.speedLimit = 60*10/36.f; // m/s
     }
 
-	public long getBeginDelay() {
-		return beginDelay;
-	}
-
-	public void setBeginDelay(long beginDelay) {
-		this.beginDelay = beginDelay;
-	}
-
-	public long getEndDelay() {
-		return endDelay;
-	}
-
-	public void setEndDelay(long endDelay) {
-		this.endDelay = endDelay;
-	}
-	
     public float getSpeedLimit() {
         return speedLimit;
     }
@@ -122,6 +105,22 @@ public class Road extends MapObject {
         this.intScore = intScore;
     }
 
+    public int getFromLag() {
+        return FromLag;
+    }
+
+    public void setFromLag(int fromLag) {
+        this.FromLag = fromLag;
+    }
+    
+    public int getToLag() {
+        return ToLag;
+    }
+
+    public void setToLag(int toLag) {
+        this.ToLag = toLag;
+    }
+
     public int getTrafficJamScore() {
         return trafficJamScore;
     }
@@ -130,19 +129,24 @@ public class Road extends MapObject {
         this.trafficJamScore = trafficJamScore;
     }
     
-	/*	1px for single line
-		3px for double line
-		5px for lane
-	*/
-	public int getWidth() {
-		int result = 5*lanesNum + 1*(lanesNum-1);
-		if (bidirectional)
-			result = 2*result + 3;
-		return result;
-	}
-	
-	@Override
     public void drawTo(Graphics g, int scrollX, int scrollY) {
+       Graphics2D g2d=(Graphics2D)g;
+        switch (selected) {       
+           case 1:  g.setColor(Color.red);
+                    break;
+           case 2:  g.setColor(Color.blue);
+                    break;
+           case 3:  g.setColor(Color.green);
+                    break;        
+           default: g.setColor(Color.black);
+                    break;
+               }
+       g2d.setStroke(new BasicStroke(3));
+       g2d.drawLine(scrollX + (int)begin.getX(), scrollY + (int)begin.getY(), 
+               scrollX + (int)end.getX(), scrollY + (int)end.getY());
+   }
+    
+/*    public void drawTo(Graphics g, int scrollX, int scrollY) {
         Graphics2D g2d = (Graphics2D)g;
 		if (selected)
             g.setColor(Color.red);
@@ -194,5 +198,5 @@ public class Road extends MapObject {
 					scrollY + end.getY() + lY));
  		}
 	}
-    
+  */  
 }

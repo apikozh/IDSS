@@ -1,4 +1,6 @@
 *.class
+*.xml
+*.bak
 build
 dist
 nbproject

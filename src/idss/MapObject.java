@@ -14,9 +14,10 @@ import java.sql.Time;
  */
 public abstract class MapObject {
     int id;
+    int lag;
     Time timeToReach;
     MapObject path;
-    boolean selected;
+    int selected;
 
 
     public int getId() {
@@ -27,11 +28,20 @@ public abstract class MapObject {
         this.id = id;
     }
 
-    public boolean isSelected() {
+    public int getLag() {
+        return lag;
+    }
+
+    public void setLag(int lag) {
+        this.lag = lag;
+    }
+
+    
+    public int getSelected() {
         return selected;
     }
 
-    public void setSelected(boolean selected) {
+    public void setSelected(int selected) {
         this.selected = selected;
     }
     

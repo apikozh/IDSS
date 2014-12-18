@@ -17,7 +17,6 @@ import java.util.ArrayList;
  */
 public class Point extends MapObject implements Comparable {
     double x, y;    // lat, lon
-	long delay;
 
     Road cameFrom;
     double tentativeTime, heuristicCost, totalCost;
@@ -115,13 +114,16 @@ public class Point extends MapObject implements Comparable {
         this.y = y;
     }
 
-    public void drawTo(Graphics g, int scrollX, int scrollY) {
-        if (selected)
-            g.setColor(Color.red);
-        else
-            g.setColor(Color.black);
-        g.fillOval(scrollX + (int)x - 5, scrollY + (int)y - 5, 10, 10);
-    }
+public void drawTo(Graphics g, int scrollX, int scrollY) {
+       g.setColor(Color.GRAY);
+       g.fillOval(scrollX + (int)x - 6, scrollY + (int)y - 8, 12, 16);
+       g.setColor(Color.green);
+       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y+2, 5, 5);
+       g.setColor(Color.red);
+       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y - 8, 5, 5);
+       g.setColor(Color.yellow);
+       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y-3, 5, 5);
+   }
 
     @Override
     public int compareTo(Object o) {
