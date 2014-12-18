@@ -24,6 +24,8 @@ public class Road extends MapObject {
     int intScore;   // 1(good road) .. 10(cant pass)
     int trafficJamScore;    // 1(no jam) .. 10 (big jam)
     float speedLimit;
+	long beginDelay;
+	long endDelay;
     
     //ArrayList<Accident> accidents;
     
@@ -42,6 +44,22 @@ public class Road extends MapObject {
         this.speedLimit = 60*10/36.f; // m/s
     }
 
+	public long getBeginDelay() {
+		return beginDelay;
+	}
+
+	public void setBeginDelay(long beginDelay) {
+		this.beginDelay = beginDelay;
+	}
+
+	public long getEndDelay() {
+		return endDelay;
+	}
+
+	public void setEndDelay(long endDelay) {
+		this.endDelay = endDelay;
+	}
+	
     public float getSpeedLimit() {
         return speedLimit;
     }

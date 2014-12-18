@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class Point extends MapObject implements Comparable {
     double x, y;    // lat, lon
+	long delay;
 
     Road cameFrom;
     double tentativeTime, heuristicCost, totalCost;
