@@ -135,17 +135,17 @@ public class Road extends MapObject {
     
     public void drawTo(Graphics g, int scrollX, int scrollY) {
        Graphics2D g2d=(Graphics2D)g;
+       g2d.setStroke(new BasicStroke(3));
         switch (selected) {       
-           case 1:  g.setColor(Color.red);
+           case 1:  g2d.setColor(Color.red);
                     break;
-           case 2:  g.setColor(Color.blue);
+           case 2:  g2d.setColor(Color.blue);
                     break;
-           case 3:  g.setColor(Color.green);
+           case 3:  g2d.setColor(Color.green);
                     break;        
-           default: g.setColor(Color.black);
+           default: g2d.setColor(Color.black);
                     break;
                }
-       g2d.setStroke(new BasicStroke(3));
        g2d.drawLine(scrollX + (int)begin.getX(), scrollY + (int)begin.getY(), 
                scrollX + (int)end.getX(), scrollY + (int)end.getY());
    }
