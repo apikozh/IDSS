@@ -37,12 +37,12 @@ public class MapPanel extends javax.swing.JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         
         if (map != null) {
-            for (Point p : map.points) {
-                p.drawTo(g, 0, 0);
-            }
             for (Road r : map.roads) {
                 r.drawTo(g, 0, 0);
             }
+            for (Point p : map.points) {
+                p.drawTo(g, 0, 0);
+            }            
         }
 
         //g.drawString("BLAH", 20, 20);

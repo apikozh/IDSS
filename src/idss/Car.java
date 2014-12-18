@@ -11,7 +11,24 @@ package idss;
  */
 public class Car {
     double maxSpeed; // m/s
+    double fuelCons, fuelConsLight;
     //double acceleration;
+
+    public double getFuelCons() {
+        return fuelCons;
+    }
+
+    public void setFuelCons(double fuelCons) {
+        this.fuelCons = fuelCons;
+    }
+
+    public double getFuelConsLight() {
+        return fuelConsLight;
+    }
+
+    public void setFuelConsLight(double fuelConsLight) {
+        this.fuelConsLight = fuelConsLight;
+    }
 
     public double getMaxSpeed() {
         return maxSpeed;
