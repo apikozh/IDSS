@@ -284,22 +284,23 @@ public class MainWindow extends javax.swing.JFrame {
 				textArea.setText(textArea.getText()+" т.к. он лежит на самом коротком пути");
 			}
 		}
+		counter=0;
+        if (routeWithBestFuelCons != null) {
+			for (MapObject mo : routeWithBestFuelCons) if (mo instanceof Road){
+				counter++;
+				textArea.setText(textArea.getText()+"\nВ наиболее экономичном с точки зрения затрат топлива маршруте на участке #" + counter + " выбирается путь #"  + mo.getId());
+				textArea.setText(textArea.getText()+" т.к. он позволяет сократить затраты топлива по сравнению с наиболее быстрым по времени маршрутом. ");	
+			}
+		}
 		for (int j=0; j<routeWithBestTime.size(); j++)
 		{
 			if (routeWithBestTime.get(j)!=routeWithBestDist.get(j) )
 					{
-						
+						routeWithBestTime.get(j-1).setTitle("Точка принятия решения");
 						break;
 					}
 		}
-//		counter=0;
-//        if (routeWithBestFuelCons != null) {
-//			for (MapObject mo : routeWithBestFuelCons) if (mo instanceof Road){
-//				counter++;
-//				textArea.setText(textArea.getText()+"\nOn the step #" + counter + " we choose road #"  + mo.getId());
-//				textArea.setText(textArea.getText()+" because it is the most efficient in terms of fuel consumption ");	
-//			}
-//		}
+
 		repaint();
     }//GEN-LAST:event_calcRouteActionPerformed
 
