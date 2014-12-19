@@ -19,10 +19,14 @@ public class MapInfo {
     ArrayList<Road> roads = new ArrayList<>();
     ArrayList<MapObject> path;
     
-    private double getHeuristicCost(Point a, Point b, Car car) {
+    private double getHeuristicCostForTime(Point a, Point b, Car car) {
         return a.getDistanceTo(b)/car.getMaxSpeed();
     }
-    
+
+    private double getHeuristicCostForFuel(Point a, Point b, Car car) {
+        return a.getDistanceTo(b) * car.getFuelCons();
+    }
+	
     public ArrayList<MapObject> findRouteWithBestTime(Point from, Point to, Time time, Car car) 
 	{
         ArrayList<Point> closedSet = new ArrayList<>();
@@ -31,7 +35,7 @@ public class MapInfo {
         
         from.cameFrom = null;
         from.tentativeTime = from.getLag();
-        from.heuristicCost = getHeuristicCost(from, to, car);
+        from.heuristicCost = getHeuristicCostForTime(from, to, car);
         from.totalCost = from.tentativeTime + from.heuristicCost;
         openSet.add(from);
         
@@ -63,13 +67,13 @@ public class MapInfo {
                     if (tentativeTime < neighbor.tentativeTime) {
                         neighbor.cameFrom = road;
                         neighbor.tentativeTime = tentativeTime;
-                        neighbor.heuristicCost = getHeuristicCost(neighbor, to, car);
+                        neighbor.heuristicCost = getHeuristicCostForTime(neighbor, to, car);
                         neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
                     }
                 }else{
                     neighbor.cameFrom = road;
                     neighbor.tentativeTime = tentativeTime;
-                    neighbor.heuristicCost = getHeuristicCost(neighbor, to, car);
+                    neighbor.heuristicCost = getHeuristicCostForTime(neighbor, to, car);
                     neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
                     openSet.add(neighbor);
                 }
@@ -121,6 +125,60 @@ public class MapInfo {
                     neighbor.cameFrom = road;
                     neighbor.tentativeTime = tentativeTime;
                     neighbor.heuristicCost = neighbor.getDistanceTo(to);
+                    neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
+                    openSet.add(neighbor);
+                }
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<MapObject> findRouteWithBestFuelCons(Point from, Point to, Time time, Car car) 
+	{
+        ArrayList<Point> closedSet = new ArrayList<>();
+        PriorityQueue<Point> openSet = new PriorityQueue<>();
+        ArrayList<MapObject> path = new ArrayList<>();
+        
+        from.cameFrom = null;
+        from.tentativeTime = from.getLag() * car.getFuelConsLight();
+        from.heuristicCost = getHeuristicCostForFuel(from, to, car);
+        from.totalCost = from.tentativeTime + from.heuristicCost;
+        openSet.add(from);
+        
+        while (!openSet.isEmpty()) {
+            Point best = openSet.poll();
+            if (best == to) {
+                path.add(to);
+                Point curr = to;
+                Road lastRoad = curr.cameFrom;
+                while(lastRoad != null) {
+                    path.add(lastRoad);
+                    curr = lastRoad.getEnd() == curr ? lastRoad.getBegin() : lastRoad.getEnd();
+                    path.add(curr);
+                    lastRoad = curr.cameFrom;
+                }
+                return path;
+            }
+            closedSet.add(best);
+            for (Road road : best.getRoads()) {
+                Point neighbor = road.getBegin() == best ? road.getEnd() : road.getBegin();
+                if (closedSet.contains(neighbor)) {
+                    continue;
+                }
+                double tentativeTime = best.tentativeTime + 
+						road.getLength() * car.getFuelCons() + 
+						neighbor.getLag() * car.getFuelConsLight();
+                if (openSet.contains(neighbor)) {
+                    if (tentativeTime < neighbor.tentativeTime) {
+                        neighbor.cameFrom = road;
+                        neighbor.tentativeTime = tentativeTime;
+                        neighbor.heuristicCost = getHeuristicCostForFuel(neighbor, to, car);
+                        neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
+                    }
+                }else{
+                    neighbor.cameFrom = road;
+                    neighbor.tentativeTime = tentativeTime;
+                    neighbor.heuristicCost = getHeuristicCostForFuel(neighbor, to, car);
                     neighbor.totalCost = neighbor.tentativeTime + neighbor.heuristicCost;
                     openSet.add(neighbor);
                 }
