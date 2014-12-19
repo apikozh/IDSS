@@ -129,7 +129,10 @@ public class MainWindow extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        jScrollPane2 = new javax.swing.JScrollPane();
+        textArea = new javax.swing.JTextArea();
         mapPanel = new idss.MapPanel();
         jPanel1 = new javax.swing.JPanel();
         calcRoute = new javax.swing.JButton();
@@ -137,7 +140,21 @@ public class MainWindow extends javax.swing.JFrame {
         routeSelectList = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
+        getContentPane().setLayout(new java.awt.GridBagLayout());
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(23, 100));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(106, 100));
+
+        textArea.setColumns(20);
+        textArea.setRows(5);
+        jScrollPane2.setViewportView(textArea);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        getContentPane().add(jScrollPane2, gridBagConstraints);
 
         mapPanel.setMinimumSize(new java.awt.Dimension(400, 400));
         mapPanel.setPreferredSize(new java.awt.Dimension(581, 400));
@@ -151,16 +168,21 @@ public class MainWindow extends javax.swing.JFrame {
         mapPanel.setLayout(mapPanelLayout);
         mapPanelLayout.setHorizontalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 578, Short.MAX_VALUE)
+            .addGap(0, 583, Short.MAX_VALUE)
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
 
-        getContentPane().add(mapPanel);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        getContentPane().add(mapPanel, gridBagConstraints);
 
-        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+        jPanel1.setMinimumSize(new java.awt.Dimension(200, 46));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
         calcRoute.setText("Calculate route");
         calcRoute.addActionListener(new java.awt.event.ActionListener() {
@@ -168,7 +190,10 @@ public class MainWindow extends javax.swing.JFrame {
                 calcRouteActionPerformed(evt);
             }
         });
-        jPanel1.add(calcRoute);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        jPanel1.add(calcRoute, gridBagConstraints);
 
         routeSelectList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Route with best time (red)", "Route with best dist (blue)", "Route with best fuel consumption (green)" };
@@ -182,9 +207,17 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(routeSelectList);
 
-        jPanel1.add(jScrollPane1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel1.add(jScrollPane1, gridBagConstraints);
 
-        getContentPane().add(jPanel1);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        getContentPane().add(jPanel1, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -299,8 +332,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton calcRoute;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private idss.MapPanel mapPanel;
     private javax.swing.JList routeSelectList;
+    private javax.swing.JTextArea textArea;
     // End of variables declaration//GEN-END:variables
 
 }
