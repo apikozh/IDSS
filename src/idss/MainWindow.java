@@ -147,6 +147,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         textArea.setColumns(20);
         textArea.setRows(5);
+        textArea.setPreferredSize(new java.awt.Dimension(104, 150));
         jScrollPane2.setViewportView(textArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -266,15 +267,40 @@ public class MainWindow extends javax.swing.JFrame {
         markRoute(routeWithBestTime, 1);
         markRoute(routeWithBestDist, 2);
         markRoute(routeWithBestFuelCons, 3);
-		textArea.setText("Route explanation:");
+		textArea.setText("Помощь в выборе пути:");
 		int counter=0;
         if (routeWithBestTime != null) {
-			for (MapObject mo : routeWithBestTime) {
+			for (MapObject mo : routeWithBestTime) if (mo instanceof Road){
 				counter++;
-				textArea.setText(textArea.getText()+"\nOn the step #"+counter+" we choose road #");		
+				textArea.setText(textArea.getText()+"\nНа участке дороги #" + counter + " выбран путь #"  + mo.getId());
+				textArea.setText(textArea.getText()+" т.к. это самый быстрый способ добраться до пункта назначения. ");
 			}
-		 
-        repaint();
+		}		 
+		counter=0;
+        if (routeWithBestDist != null) {
+			for (MapObject mo : routeWithBestDist) if (mo instanceof Road){
+				counter++;
+				textArea.setText(textArea.getText()+"\nПри выборе наикоротшей дороги на участке #" + counter + " выбирается путь #"  + mo.getId());
+				textArea.setText(textArea.getText()+" т.к. он лежит на самом коротком пути");
+			}
+		}
+		for (int j=0; j<routeWithBestTime.size(); j++)
+		{
+			if (routeWithBestTime.get(j)!=routeWithBestDist.get(j) )
+					{
+						
+						break;
+					}
+		}
+//		counter=0;
+//        if (routeWithBestFuelCons != null) {
+//			for (MapObject mo : routeWithBestFuelCons) if (mo instanceof Road){
+//				counter++;
+//				textArea.setText(textArea.getText()+"\nOn the step #" + counter + " we choose road #"  + mo.getId());
+//				textArea.setText(textArea.getText()+" because it is the most efficient in terms of fuel consumption ");	
+//			}
+//		}
+		repaint();
     }//GEN-LAST:event_calcRouteActionPerformed
 
     private void mapPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapPanelMousePressed
