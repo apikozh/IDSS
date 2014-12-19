@@ -5,6 +5,8 @@
  */
 package idss;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,7 +18,9 @@ import java.awt.RenderingHints;
 public class MapPanel extends javax.swing.JPanel {
     
     MapInfo map;
-        
+	int scrollX, scrollY;
+    float zoom = 1;
+	
     /**
      * Creates new form MapPanel
      */
@@ -24,10 +28,56 @@ public class MapPanel extends javax.swing.JPanel {
         initComponents();
     }
 
+    public MapInfo getMapInfo() {
+        return map;
+    }
+
     public void setMapInfo(MapInfo map) {
         this.map = map;
     }
-    
+
+	public int getScrollX() {
+		return scrollX;
+	}
+
+	public void setScrollX(int scrollX) {
+		this.scrollX = scrollX;
+	}
+
+	public int getScrollY() {
+		return scrollY;
+	}
+
+	public void setScrollY(int scrollY) {
+		this.scrollY = scrollY;
+	}
+
+	public int getMaxScrollX() {
+		return 100;
+	}
+
+	public int getMaxScrollY() {
+		return 100;
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(float zoom) {
+		this.zoom = zoom;
+	}
+	
+	public MapObject getObjectAt(int x, int y) {
+		Point cursor = new Point(x + scrollX, y + scrollY);
+		for (Point point : map.points) {
+			if (point.getDistanceTo(cursor) < 15)
+				return point;
+		}
+		//TODO: Add roads
+		return null;
+	}
+	
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D)g;
@@ -38,15 +88,17 @@ public class MapPanel extends javax.swing.JPanel {
         
         if (map != null) {
             for (Road r : map.roads) {
-                r.drawTo(g, 0, 0);
+                r.drawTo(g, scrollX, scrollY, zoom);
             }
             for (Point p : map.points) {
-                p.drawTo(g, 0, 0);
+                p.drawTo(g, scrollX, scrollY, zoom);
             }            
         }
 
         //g.drawString("BLAH", 20, 20);
-        g.drawRect(0, 0, getWidth()-1, getHeight()-1);
+        g2d.setStroke(new BasicStroke(1));
+		g2d.setColor(Color.BLACK);
+		g2d.drawRect(0, 0, getWidth()-1, getHeight()-1);
     }
     /**
      * This method is called from within the constructor to initialize the form.

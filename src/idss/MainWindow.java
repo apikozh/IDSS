@@ -5,6 +5,8 @@
  */
 package idss;
 
+import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -20,7 +22,11 @@ import java.util.logging.Logger;
 public class MainWindow extends javax.swing.JFrame {
 
     MapInfo map;
-    
+    ArrayList<MapObject> routeWithBestTime = new ArrayList<>();
+	ArrayList<MapObject> routeWithBestDist = new ArrayList<>();
+	ArrayList<MapObject> routeWithBestFuelCons = new ArrayList<>();
+    ArrayList<Point> selectedPionts = new ArrayList<>(); 
+	
     //Timer timer = new Timer();
     
     /**
@@ -126,138 +132,133 @@ public class MainWindow extends javax.swing.JFrame {
 
         mapPanel = new idss.MapPanel();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jSpinner1 = new javax.swing.JSpinner();
-        jSpinner2 = new javax.swing.JSpinner();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        calcRoute = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        routeSelectList = new javax.swing.JList();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
+
+        mapPanel.setMinimumSize(new java.awt.Dimension(400, 400));
+        mapPanel.setPreferredSize(new java.awt.Dimension(581, 400));
+        mapPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                mapPanelMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout mapPanelLayout = new javax.swing.GroupLayout(mapPanel);
         mapPanel.setLayout(mapPanelLayout);
         mapPanelLayout.setHorizontalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 430, Short.MAX_VALUE)
+            .addGap(0, 578, Short.MAX_VALUE)
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        getContentPane().add(mapPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 430, 370));
+        getContentPane().add(mapPanel);
 
-        jButton1.setText("Calculate route \\w best dist");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
+
+        calcRoute.setText("Calculate route");
+        calcRoute.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                calcRouteActionPerformed(evt);
             }
         });
+        jPanel1.add(calcRoute);
 
-        jSpinner1.setModel(new javax.swing.SpinnerNumberModel(1, 1, 6, 1));
-
-        jSpinner2.setModel(new javax.swing.SpinnerNumberModel(1, 1, 6, 1));
-
-        jButton2.setText("Calculate route \\w best time");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+        routeSelectList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Route with best time (red)", "Route with best dist (blue)", "Route with best fuel consumption (green)" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        routeSelectList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                routeSelectListValueChanged(evt);
             }
         });
+        jScrollPane1.setViewportView(routeSelectList);
 
-        jButton3.setText("Calculate route \\w best fuel cons");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
+        jPanel1.add(jScrollPane1);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap(39, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(65, 65, 65)
-                .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton3)
-                .addContainerGap(157, Short.MAX_VALUE))
-        );
-
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 240, 370));
+        getContentPane().add(jPanel1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        if (map.path != null)
-        for (MapObject mo : map.path) {
-            mo.setSelected(0);
-        }
-        
+	private void markRoute(ArrayList<MapObject> path, int type) {
+        if (path != null) {
+			for (MapObject mo : path) {
+				mo.setSelected(type);
+			}
+		}
+	}
+	
+	private void clearRoute(ArrayList<MapObject> path) {
+        if (path != null) {
+			markRoute(path, 0);
+			path.clear();
+			path = null;
+		}
+	}
+	
+    private void calcRouteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcRouteActionPerformed
+        clearRoute(routeWithBestTime);
+        clearRoute(routeWithBestDist);
+        clearRoute(routeWithBestFuelCons);		
+		
+		if (selectedPionts.isEmpty())
+			return;
+		
         Car car = new Car();
         car.setMaxSpeed(22.22); //m/s = 80 km/h
+        car.setFuelCons(8/1000);
+        car.setFuelConsLight(30 * car.getFuelCons());
         
-        int from = (int)jSpinner1.getValue()-1;
-        int to = (int)jSpinner2.getValue()-1;
+        //int from = (int)jSpinner1.getValue()-1;
+        //int to = (int)jSpinner2.getValue()-1;
         
-        ArrayList<MapObject> path = map.findRouteWithBestDist(map.points.get(from), map.points.get(to));
-        for (MapObject mo : path) {
-            mo.setSelected(1);
-        }
-        map.path = path;
-        
-        repaint();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (map.path != null)
-        for (MapObject mo : map.path) {
-            mo.setSelected(0);
-        }
-        
-        Car car = new Car();
-        car.setMaxSpeed(22.22); //m/s = 80 km/h
-        
-        int from = (int)jSpinner1.getValue()-1;
-        int to = (int)jSpinner2.getValue()-1;
-        
-        ArrayList<MapObject> path = map.findRouteWithBestTime(map.points.get(from), 
-                map.points.get(to), null, car);
-        for (MapObject mo : path) {
-            mo.setSelected(2);
-        }
-        map.path = path;
+		Point from, to = selectedPionts.get(0);
+		for (int i=1; i<selectedPionts.size(); i++) {
+			from = to;
+			to = selectedPionts.get(i);
+			routeWithBestTime.addAll(map.findRouteWithBestTime(from, to, null, car));
+			routeWithBestDist.addAll(map.findRouteWithBestDist(from, to));
+			routeWithBestFuelCons.addAll(map.findRouteWithBestFuelCons(from, to, null, car));
+		}
+			
+        markRoute(routeWithBestTime, 1);
+        markRoute(routeWithBestDist, 2);
+        markRoute(routeWithBestFuelCons, 3);		
         
         repaint();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_calcRouteActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void mapPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mapPanelMousePressed
+        Point point = (Point)mapPanel.getObjectAt(evt.getX(), evt.getY());
+		if (point != null) {
+			if (evt.getButton() == MouseEvent.BUTTON1) {
+				selectedPionts.add(point);
+				point.setColor(Color.BLUE);
+			}else{
+				selectedPionts.remove(point);
+				point.setColor(null);
+			}
+	        repaint();
+		}
+    }//GEN-LAST:event_mapPanelMousePressed
+
+    private void routeSelectListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_routeSelectListValueChanged
+        switch (routeSelectList.getSelectedIndex()) {
+			case 0: markRoute(routeWithBestTime, 1); break;
+			case 1: markRoute(routeWithBestDist, 2); break;
+			case 2: markRoute(routeWithBestFuelCons, 3); break;
+		}
+        repaint();
+    }//GEN-LAST:event_routeSelectListValueChanged
 
     /**
      * @param args the command line arguments
@@ -295,13 +296,11 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton calcRoute;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSpinner jSpinner1;
-    private javax.swing.JSpinner jSpinner2;
+    private javax.swing.JScrollPane jScrollPane1;
     private idss.MapPanel mapPanel;
+    private javax.swing.JList routeSelectList;
     // End of variables declaration//GEN-END:variables
 
 }

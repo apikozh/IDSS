@@ -5,6 +5,7 @@
  */
 package idss;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.sql.Time;
 
@@ -18,7 +19,7 @@ public abstract class MapObject {
     Time timeToReach;
     MapObject path;
     int selected;
-
+	Color color;
 
     public int getId() {
         return id;
@@ -44,6 +45,14 @@ public abstract class MapObject {
     public void setSelected(int selected) {
         this.selected = selected;
     }
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
     
     public Time getTimeToReach() {
         return timeToReach;
@@ -53,6 +62,6 @@ public abstract class MapObject {
         this.timeToReach = timeToReach;
     }
    
-    public abstract void drawTo(Graphics g, int scrollX, int scrollY);
+    public abstract void drawTo(Graphics g, int scrollX, int scrollY, float zoom);
     
 }

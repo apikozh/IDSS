@@ -120,15 +120,20 @@ public class Point extends MapObject implements Comparable {
         this.y = y;
     }
 
-public void drawTo(Graphics g, int scrollX, int scrollY) {
-       g.setColor(Color.GRAY);
-       g.fillOval(scrollX + (int)x - 6, scrollY + (int)y - 8, 12, 16);
-       g.setColor(Color.green);
-       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y+2, 5, 5);
-       g.setColor(Color.red);
-       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y - 8, 5, 5);
-       g.setColor(Color.yellow);
-       g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y-3, 5, 5);
+	@Override
+	public void drawTo(Graphics g, int scrollX, int scrollY, float zoom) {
+		if (getColor() == null)
+			g.setColor(Color.GRAY);
+		else
+			g.setColor(getColor());
+		
+		g.fillOval(scrollX + (int)x - 6, scrollY + (int)y - 8, 12, 16);
+		g.setColor(Color.green);
+		g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y+2, 5, 5);
+		g.setColor(Color.red);
+		g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y - 8, 5, 5);
+		g.setColor(Color.yellow);
+		g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y-3, 5, 5);
    }
 
     @Override

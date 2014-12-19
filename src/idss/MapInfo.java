@@ -17,8 +17,7 @@ import java.util.PriorityQueue;
 public class MapInfo {
     ArrayList<Point> points = new ArrayList<>();
     ArrayList<Road> roads = new ArrayList<>();
-    ArrayList<MapObject> path;
-    
+	
     private double getHeuristicCostForTime(Point a, Point b, Car car) {
         return a.getDistanceTo(b)/car.getMaxSpeed();
     }
