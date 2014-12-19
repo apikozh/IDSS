@@ -1,8 +1,5 @@
 *.class
-*.xml
 *.bak
 build
 dist
-nbproject
-build.xml
-INFO.TXT
+nbproject/private

@@ -262,11 +262,18 @@ public class MainWindow extends javax.swing.JFrame {
 			routeWithBestDist.addAll(map.findRouteWithBestDist(from, to));
 			routeWithBestFuelCons.addAll(map.findRouteWithBestFuelCons(from, to, null, car));
 		}
-			
+		
         markRoute(routeWithBestTime, 1);
         markRoute(routeWithBestDist, 2);
-        markRoute(routeWithBestFuelCons, 3);		
-        
+        markRoute(routeWithBestFuelCons, 3);
+		textArea.setText("Route explanation:");
+		int counter=0;
+        if (routeWithBestTime != null) {
+			for (MapObject mo : routeWithBestTime) {
+				counter++;
+				textArea.setText(textArea.getText()+"\nOn the step #"+counter+" we choose road #");		
+			}
+		 
         repaint();
     }//GEN-LAST:event_calcRouteActionPerformed
 
