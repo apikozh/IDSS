@@ -134,6 +134,10 @@ public class Point extends MapObject implements Comparable {
 		g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y - 8, 5, 5);
 		g.setColor(Color.yellow);
 		g.fillOval(scrollX + (int)x - 6+3, scrollY + (int)y-3, 5, 5);
+		
+		g.setColor(Color.BLACK);
+		if (title!=null) g.drawString(title, (int)x-55, (int)y-8);
+		
    }
 
     @Override
