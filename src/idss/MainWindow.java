@@ -5,6 +5,7 @@
  */
 package idss;
 
+import com.sun.glass.events.KeyEvent;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
@@ -25,7 +26,9 @@ public class MainWindow extends javax.swing.JFrame {
     ArrayList<MapObject> routeWithBestTime = new ArrayList<>();
 	ArrayList<MapObject> routeWithBestDist = new ArrayList<>();
 	ArrayList<MapObject> routeWithBestFuelCons = new ArrayList<>();
-    ArrayList<Point> selectedPionts = new ArrayList<>(); 
+    ArrayList<Point> selectedPoints = new ArrayList<>(); 
+	Connection connection;
+	ArrayList<Car> cars = new ArrayList<>();
 	
     //Timer timer = new Timer();
     
@@ -33,92 +36,43 @@ public class MainWindow extends javax.swing.JFrame {
      * Creates new form MainWindow
      */
     public MainWindow() {    
-        /*
-        Crossroad3 cr1 = new Crossroad3(250, 100);
-        Crossroad3 cr2 = new Crossroad3(50, 200);
-        Crossroad3 cr3 = new Crossroad3(100, 250);
-        JunctionPoint jp1 = new JunctionPoint(200, 50);
-        JunctionPoint jp2 = new JunctionPoint(250,250);
-        EndPoint ep = new EndPoint(100, 300);
-        points.add(cr1);
-        points.add(cr2);
-        points.add(cr3);
-        points.add(jp1);
-        points.add(jp2);
-        points.add(ep);
-        Road r = new Road(cr1, cr2, true, 2, 1);
-        cr1.setR2(r);
-        cr2.setR2(r);
-        roads.add(r);
-        r = new Road(cr1, jp1, true, 2, 1);
-        cr1.setR3(r);
-        jp1.setR1(r);
-        roads.add(r);
-        r = new Road(cr1, jp2, true, 2, 1);
-        cr1.setR1(r);
-        jp2.setR1(r);
-        roads.add(r);
-        r = new Road(cr2, jp1, true, 2, 1);
-        cr2.setR1(r);
-        jp1.setR2(r);
-        roads.add(r);
-        r = new Road(cr2, cr3, true, 2, 1);
-        cr2.setR3(r);
-        cr3.setR3(r);
-        roads.add(r);
-        r = new Road(jp2, cr3, true, 2, 1);
-        jp2.setR2(r);
-        cr3.setR1(r);
-        roads.add(r);
-        r = new Road(ep, cr3, true, 2, 1);
-        ep.setR1(r);
-        cr3.setR2(r);
-        roads.add(r);
-        */
-
         initComponents();
         
+        Car car;
+		
+		car = new Car();
+        car.setName("Car 1");
+		car.setMaxSpeed(22.22); //m/s = 80 km/h
+        car.setFuelCons(8/1000);
+        car.setFuelConsLight(30 * car.getFuelCons());
+		cars.add(car);
+		
+		car = new Car();
+        car.setName("Car 2");
+		car.setMaxSpeed(30.0); //m/s
+        car.setFuelCons(10/1000);
+        car.setFuelConsLight(30 * car.getFuelCons());
+		cars.add(car);
+		
+		car = new Car();
+        car.setName("Car 3");
+		car.setMaxSpeed(18.0); //m/s
+        car.setFuelCons(12/1000);
+        car.setFuelConsLight(40 * car.getFuelCons());
+		cars.add(car);
+		
         map = new MapInfo();
         mapPanel.setMapInfo(map);
-        /*try {
-            Class.forName("org.apache.derby.jdbc.ClientDriver");
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        try {
-            Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/idss", "idss", "idss");
-            map.loadFromDB(conn);
+
+		try {
+            connection = DriverManager.getConnection("jdbc:derby://localhost:1527/idss", "idss", "idss");
+            map.loadFromDB(connection);
         } catch (SQLException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
-        /*Point p1 = new Point(250, 100);
-        Point p2 = new Point(50, 200);
-        Point p3 = new Point(100, 250);
-        Point p4 = new Point(200, 50);
-        Point p5 = new Point(250, 250);
-        Point p6 = new Point(100, 300);
-        map.points.add(p1);
-        map.points.add(p2);
-        map.points.add(p3);
-        map.points.add(p4);
-        map.points.add(p5);
-        map.points.add(p6);
-        map.roads.add(new Road(p1, p2, true, 2, 1));
-        map.roads.add(new Road(p1, p4, true, 2, 1));
-        map.roads.add(new Road(p1, p5, true, 2, 1));
-        map.roads.add(new Road(p2, p4, true, 2, 1));
-        map.roads.add(new Road(p2, p3, true, 2, 1));
-        map.roads.add(new Road(p5, p3, true, 2, 1));
-        map.roads.add(new Road(p6, p3, true, 2, 1));
-        
-        Car car = new Car();
-        car.setMaxSpeed(80);
-        
-        ArrayList<MapObject> path = map.findBestRoute(p1, p6, null, car);
-        for (MapObject mo : path) {
-            mo.setSelected(true);
-        }
-        map.path = path;*/
+
+        horizontalScrollBar.setMaximum(mapPanel.getMaxScrollX());
+        verticalScrollBar.setMaximum(mapPanel.getMaxScrollY());
     }
 
     /**
@@ -133,11 +87,18 @@ public class MainWindow extends javax.swing.JFrame {
 
         jScrollPane2 = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
+        scrollPanel = new javax.swing.JPanel();
         mapPanel = new idss.MapPanel();
+        horizontalScrollBar = new javax.swing.JScrollBar();
+        verticalScrollBar = new javax.swing.JScrollBar();
         jPanel1 = new javax.swing.JPanel();
         calcRoute = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         routeSelectList = new javax.swing.JList();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.GridBagLayout());
@@ -145,9 +106,15 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(23, 100));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(106, 100));
 
+        textArea.setEditable(false);
         textArea.setColumns(20);
         textArea.setRows(5);
         textArea.setPreferredSize(new java.awt.Dimension(104, 150));
+        textArea.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                textAreaKeyPressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(textArea);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -156,6 +123,15 @@ public class MainWindow extends javax.swing.JFrame {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         getContentPane().add(jScrollPane2, gridBagConstraints);
+
+        scrollPanel.setMinimumSize(new java.awt.Dimension(30, 30));
+        scrollPanel.setPreferredSize(new java.awt.Dimension(500, 400));
+        scrollPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                scrollPanelComponentResized(evt);
+            }
+        });
+        scrollPanel.setLayout(new java.awt.GridBagLayout());
 
         mapPanel.setMinimumSize(new java.awt.Dimension(400, 400));
         mapPanel.setPreferredSize(new java.awt.Dimension(581, 400));
@@ -169,7 +145,7 @@ public class MainWindow extends javax.swing.JFrame {
         mapPanel.setLayout(mapPanelLayout);
         mapPanelLayout.setHorizontalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 583, Short.MAX_VALUE)
+            .addGap(0, 619, Short.MAX_VALUE)
         );
         mapPanelLayout.setVerticalGroup(
             mapPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -177,10 +153,48 @@ public class MainWindow extends javax.swing.JFrame {
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        scrollPanel.add(mapPanel, gridBagConstraints);
+
+        horizontalScrollBar.setOrientation(javax.swing.JScrollBar.HORIZONTAL);
+        horizontalScrollBar.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                horizontalScrollBarPropertyChange(evt);
+            }
+        });
+        horizontalScrollBar.addAdjustmentListener(new java.awt.event.AdjustmentListener() {
+            public void adjustmentValueChanged(java.awt.event.AdjustmentEvent evt) {
+                horizontalScrollBarAdjustmentValueChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        scrollPanel.add(horizontalScrollBar, gridBagConstraints);
+
+        verticalScrollBar.addAdjustmentListener(new java.awt.event.AdjustmentListener() {
+            public void adjustmentValueChanged(java.awt.event.AdjustmentEvent evt) {
+                verticalScrollBarAdjustmentValueChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        scrollPanel.add(verticalScrollBar, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        getContentPane().add(mapPanel, gridBagConstraints);
+        getContentPane().add(scrollPanel, gridBagConstraints);
 
         jPanel1.setMinimumSize(new java.awt.Dimension(200, 46));
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -210,11 +224,42 @@ public class MainWindow extends javax.swing.JFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(jScrollPane1, gridBagConstraints);
+
+        jList1.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Car 1", "Car 2", "Car 3" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(jList1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.1;
+        jPanel1.add(jScrollPane3, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("Select route criteria:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        jPanel1.add(jLabel1, gridBagConstraints);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel2.setText("Select car:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
+        jPanel1.add(jLabel2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -240,14 +285,28 @@ public class MainWindow extends javax.swing.JFrame {
 	}
 	
     private void calcRouteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcRouteActionPerformed
-        clearRoute(routeWithBestTime);
-        clearRoute(routeWithBestDist);
-        clearRoute(routeWithBestFuelCons);		
+        if (!routeWithBestTime.isEmpty() || !routeWithBestDist.isEmpty() ||
+				!routeWithBestFuelCons.isEmpty())
+		{
+			clearRoute(routeWithBestTime);
+			clearRoute(routeWithBestDist);
+			clearRoute(routeWithBestFuelCons);		
+			
+			for (Point p : selectedPoints)
+				p.setColor(null);
+			selectedPoints.clear();
+			
+			calcRoute.setText("Calculate route");
+			repaint();
+			return;
+		}
 		
-		if (selectedPionts.isEmpty())
+		if (selectedPoints.isEmpty())
 			return;
 		
-        Car car = new Car();
+		calcRoute.setText("Clear route");
+        Car car;
+		car = new Car();
         car.setMaxSpeed(22.22); //m/s = 80 km/h
         car.setFuelCons(8/1000);
         car.setFuelConsLight(30 * car.getFuelCons());
@@ -255,10 +314,10 @@ public class MainWindow extends javax.swing.JFrame {
         //int from = (int)jSpinner1.getValue()-1;
         //int to = (int)jSpinner2.getValue()-1;
         
-		Point from, to = selectedPionts.get(0);
-		for (int i=1; i<selectedPionts.size(); i++) {
+		Point from, to = selectedPoints.get(0);
+		for (int i=1; i<selectedPoints.size(); i++) {
 			from = to;
-			to = selectedPionts.get(i);
+			to = selectedPoints.get(i);
 			routeWithBestTime.addAll(map.findRouteWithBestTime(from, to, null, car));
 			routeWithBestDist.addAll(map.findRouteWithBestDist(from, to));
 			routeWithBestFuelCons.addAll(map.findRouteWithBestFuelCons(from, to, null, car));
@@ -308,14 +367,28 @@ public class MainWindow extends javax.swing.JFrame {
         Point point = (Point)mapPanel.getObjectAt(evt.getX(), evt.getY());
 		if (point != null) {
 			if (evt.getButton() == MouseEvent.BUTTON1) {
-				selectedPionts.add(point);
+				selectedPoints.add(point);
 				point.setColor(Color.BLUE);
 			}else{
-				selectedPionts.remove(point);
+				selectedPoints.remove(point);
 				point.setColor(null);
 			}
+			if (evt.isControlDown() && map.godMode && selectedPoints.size() == 2) {
+				Road road = new Road(selectedPoints.get(0), selectedPoints.get(1), true, 2, 1);
+				map.addRoadToDB(road);
+				for (Point p : selectedPoints)
+					p.setColor(null);
+				selectedPoints.clear();
+			}
+			
 	        repaint();
+		}else{
+			if (map.godMode) {
+				mapPanel.addPointAt(evt.getX(), evt.getY());
+				repaint();
+			}
 		}
+			
     }//GEN-LAST:event_mapPanelMousePressed
 
     private void routeSelectListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_routeSelectListValueChanged
@@ -326,6 +399,38 @@ public class MainWindow extends javax.swing.JFrame {
 		}
         repaint();
     }//GEN-LAST:event_routeSelectListValueChanged
+
+    private void scrollPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_scrollPanelComponentResized
+        //horizontalScrollBar.setMaximum(mapPanel.getMaxScrollX());
+        //verticalScrollBar.setMaximum(mapPanel.getMaxScrollY());
+    }//GEN-LAST:event_scrollPanelComponentResized
+
+    private void horizontalScrollBarPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_horizontalScrollBarPropertyChange
+        System.out.println("dverver");
+    }//GEN-LAST:event_horizontalScrollBarPropertyChange
+
+    private void horizontalScrollBarAdjustmentValueChanged(java.awt.event.AdjustmentEvent evt) {//GEN-FIRST:event_horizontalScrollBarAdjustmentValueChanged
+        mapPanel.setScrollX(horizontalScrollBar.getValue());
+		repaint();
+    }//GEN-LAST:event_horizontalScrollBarAdjustmentValueChanged
+
+    private void verticalScrollBarAdjustmentValueChanged(java.awt.event.AdjustmentEvent evt) {//GEN-FIRST:event_verticalScrollBarAdjustmentValueChanged
+        mapPanel.setScrollY(verticalScrollBar.getValue());
+		repaint();
+    }//GEN-LAST:event_verticalScrollBarAdjustmentValueChanged
+
+    private void textAreaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textAreaKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_G) {
+			map.godMode = !map.godMode;
+			repaint();
+		}else if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
+			for (Point point : selectedPoints) {
+				map.removePointFromDB(point);
+			}
+			selectedPoints.clear();
+			repaint();
+		}
+    }//GEN-LAST:event_textAreaKeyPressed
 
     /**
      * @param args the command line arguments
@@ -364,12 +469,19 @@ public class MainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton calcRoute;
+    private javax.swing.JScrollBar horizontalScrollBar;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private idss.MapPanel mapPanel;
     private javax.swing.JList routeSelectList;
+    private javax.swing.JPanel scrollPanel;
     private javax.swing.JTextArea textArea;
+    private javax.swing.JScrollBar verticalScrollBar;
     // End of variables declaration//GEN-END:variables
 
 }

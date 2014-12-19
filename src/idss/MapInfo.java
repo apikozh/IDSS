@@ -15,6 +15,8 @@ import java.util.PriorityQueue;
  * @author Andrew
  */
 public class MapInfo {
+	Connection connection;
+	boolean godMode;
     ArrayList<Point> points = new ArrayList<>();
     ArrayList<Road> roads = new ArrayList<>();
 	
@@ -198,6 +200,7 @@ public class MapInfo {
     public void loadFromDB(Connection conn) {
         roads.clear();
         points.clear();
+		connection = conn;
         
         Statement stmt = null;
         try{
@@ -278,5 +281,110 @@ public class MapInfo {
             }
         }
     }
+	
+	public void addRoadToDB(Road road) {
+        Statement stmt = null;
+		//PreparedStatement addStmt = null;
+        try{
+            stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT MAX(id) FROM road");
+            if (!rs.next())
+				return;
+			int id = rs.getInt(1) + 1;
+                
+			stmt.execute("INSERT INTO road (id, start, dest, bidirectional, " + 
+					"lanes_num, int_score, tolag, fromlag) VALUES (" + 
+					id + "," + road.getBegin().getId() + "," + road.getEnd().getId() +  "," + 
+					road.isBidirectional() + "," + road.getLanesNum() + "," + 
+					road.getIntScore() + "," + road.getToLag() + "," + road.getFromLag() + ")");                
+			
+			road.setId(id);
+			roads.add(road);
+			
+        }catch(SQLException se){
+            se.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+               if(stmt != null)
+                  stmt.close();
+            }catch(SQLException se2){
+            }
+        }
+	}
+
+	public void removeRoadFromDB(Road road) {
+        Statement stmt = null;
+		//PreparedStatement addStmt = null;
+        try{
+            stmt = connection.createStatement();
+			stmt.execute("DELETE FROM road WHERE id = " + road.getId());			
+			points.remove(road);
+			
+        }catch(SQLException se){
+            se.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+               if(stmt != null)
+                  stmt.close();
+            }catch(SQLException se2){
+            }
+        }
+	}
+	
+	public void addPointToDB(Point point) {
+        Statement stmt = null;
+		//PreparedStatement addStmt = null;
+        try{
+            stmt = connection.createStatement();
+
+            ResultSet rs = stmt.executeQuery("SELECT MAX(id) FROM point");
+            if (!rs.next())
+				return;
+			int id = rs.getInt(1) + 1;
+                
+			stmt.execute("INSERT INTO point (id, x, y) VALUES (" + 
+					id + "," + point.getX() + "," + point.getY() + ")");
+			
+			point.setId(id);
+			points.add(point);
+			
+        }catch(SQLException se){
+            se.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+               if(stmt != null)
+                  stmt.close();
+            }catch(SQLException se2){
+            }
+        }
+	}
+	
+	public void removePointFromDB(Point point) {
+        Statement stmt = null;
+		//PreparedStatement addStmt = null;
+        try{
+            stmt = connection.createStatement();
+			stmt.execute("DELETE FROM point WHERE id = " + point.getId());			
+			points.remove(point);
+			
+        }catch(SQLException se){
+            se.printStackTrace();
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            try{
+               if(stmt != null)
+                  stmt.close();
+            }catch(SQLException se2){
+            }
+        }
+	}
     
 }

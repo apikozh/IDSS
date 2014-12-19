@@ -7,9 +7,13 @@ package idss;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.font.GlyphVector;
 
 /**
  *
@@ -53,11 +57,11 @@ public class MapPanel extends javax.swing.JPanel {
 	}
 
 	public int getMaxScrollX() {
-		return 100;
+		return 1000;
 	}
 
 	public int getMaxScrollY() {
-		return 100;
+		return 1000;
 	}
 
 	public float getZoom() {
@@ -86,14 +90,35 @@ public class MapPanel extends javax.swing.JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         
+		if (map != null && map.godMode) {
+			Font font = g2d.getFont().deriveFont(80.f);
+			String text = "God Mode!";
+			GlyphVector gv = font.createGlyphVector(g2d.getFontRenderContext(), text);
+			Shape ol = gv.getOutline(30, 150);
+			g2d.setStroke(new BasicStroke(2.f));
+			g2d.setColor(new Color(255, 255, 255, 127));
+			g2d.draw(ol);
+			g2d.setColor(new Color(255, 0, 0, 127));
+			// Color(0, 170, 0, 127) G
+			// Color(0, 0, 255, 127) B
+			// Color(255, 0, 0, 127) R
+			// Color(100, 100, 0, 127) Y
+			// Color(0, 150, 150, 127) T
+			// Color(150, 0, 150, 127) P
+			g2d.fill(ol);
+			g2d.setStroke(new BasicStroke(1.f));
+		}
+		
+		g2d.translate(-scrollX, -scrollY);
         if (map != null) {
             for (Road r : map.roads) {
-                r.drawTo(g, scrollX, scrollY, zoom);
+                r.drawTo(g, 0, 0, zoom);
             }
             for (Point p : map.points) {
-                p.drawTo(g, scrollX, scrollY, zoom);
+                p.drawTo(g, 0, 0, zoom);
             }            
         }
+		g2d.translate(scrollX, scrollY);
 
         //g.drawString("BLAH", 20, 20);
         g2d.setStroke(new BasicStroke(1));
@@ -124,4 +149,9 @@ public class MapPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+
+	void addPointAt(int x, int y) {
+		Point point = new Point(x + scrollX, y + scrollY);
+		map.addPointToDB(point);
+	}
 }

@@ -10,7 +10,8 @@ package idss;
  * @author Andrew
  */
 public class Car {
-    double maxSpeed; // m/s
+    String name; 
+	double maxSpeed; // m/s
     double fuelCons, fuelConsLight;
     //double acceleration;
 
@@ -37,6 +38,14 @@ public class Car {
     public void setMaxSpeed(double maxSpeed) {
         this.maxSpeed = maxSpeed;
     }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
     
     
 }
